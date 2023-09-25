@@ -1,0 +1,12 @@
+C:/Users/klaze/Documents/Chip Headers/CMSIS/Include/core_cm4.h:1688:22:__NVIC_EnableIRQ	2
+../Drivers/stm32f401_gpio.c:44:6:GPIO_Config	1
+../Drivers/stm32f401_gpio.c:62:6:GPIO_PeriphClck	14
+../Drivers/stm32f401_gpio.c:161:6:GPIO_Init	4
+../Drivers/stm32f401_gpio.c:227:6:GPIO_AlternateFunctionConfig	2
+../Drivers/stm32f401_gpio.c:258:6:GPIO_WritePin	4
+../Drivers/stm32f401_gpio.c:293:6:GPIO_WritePort	1
+../Drivers/stm32f401_gpio.c:307:9:GPIO_ReadPin	1
+../Drivers/stm32f401_gpio.c:323:10:GPIO_ReadPort	1
+../Drivers/stm32f401_gpio.c:348:6:GPIO_ConfigLEDPA5	4
+../Drivers/stm32f401_gpio.c:384:9:GPIO_ConfigButtonPC13	1
+../Drivers/stm32f401_gpio.c:428:6:GPIO_EXTIConfig	17

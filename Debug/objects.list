@@ -1,0 +1,8 @@
+"./Drivers/stm32f401_gpio.o"
+"./Drivers/stm32f401_rcc.o"
+"./Example_Functions/GPIO_EXTI.o"
+"./Example_Functions/GPIO_Pin_Config.o"
+"./Example_Functions/GPIO_Port_Init.o"
+"./Src/syscalls.o"
+"./Src/sysmem.o"
+"./Startup/startup_stm32f401retx.o"
