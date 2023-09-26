@@ -1,4 +1,4 @@
-/*#include <stdint.h>
+#include <stdint.h>
 #include "stm32f401_gpio.h"
 #include "stm32f401_rcc.h"
 #include "stm32f4xx.h"
@@ -22,27 +22,27 @@
  * LED will return to its original state.
  */
 
-/*static void EXTI_Callback();
+static void EXTI_Callback();
 void EXTI15_10_IRQHandler();
 
 int main()
 {
-	/*Port A, Pin 5 (on-Board LED) - GPIO Output, push-pull, Low Speed and no pull-up/pull-down./
+	//Port A, Pin 5 (on-Board LED) - GPIO Output, push-pull, Low Speed and no pull-up/pull-down.
 	GPIO_Config_t PA5;
 	GPIO_Config(&PA5, Pin5, GPIO_Output, GPIO_PushPull, GPIO_LowSpeed, GPIO_PUPD_None);
 	GPIO_Init(GPIOA, &PA5);
 
-	/*Port C, Pin 13 (on-board pushbutton) - GPIO Input, push-pull, Medium Speed and Pull-Up activated /
+	//Port C, Pin 13 (on-board pushbutton) - GPIO Input, push-pull, Medium Speed and Pull-Up activated
 	GPIO_Config_t PC13;
 	GPIO_Config(&PC13, Pin13, GPIO_Input, GPIO_PushPull, GPIO_LowSpeed, GPIO_PUPD_None);
 	GPIO_Init(GPIOC, &PC13);
 
-	/*Configure the EXTI/
+	//Configure the EXTI
 	GPIO_EXTIConfig(EXTI_PortC, Pin13, EXTI_RisingTrigger);
 
 	while(1)
 	{
-		/*Set the default state of the LED to off/
+		//Set the default state of the LED to off
 		GPIO_WritePin(GPIOA, Pin5, GPIO_Reset);
 	}
 
@@ -50,25 +50,25 @@ int main()
 
 static void EXTI_Callback()
 {
-	/*Turn on the LED/
+	//Turn on the LED/
 	GPIO_WritePin(GPIOA, Pin5, GPIO_Write);
-	/*The for loop is used to add a slight delay so the LED is visible when it is turned on/
+	//The for loop is used to add a slight delay so the LED is visible when it is turned on
 	for(int i = 0; i < 1000000; i++){}
 }
 
 void EXTI15_10_IRQHandler()
 {
-	/*Checking if interrupt flag is raised in pending register/
+	//Checking if interrupt flag is raised in pending register
 	if((EXTI->PR & (1U << Pin13)) != 0)
 	{
-		/*Clear the PR flag - cleared when a 1 is written to it/
+		//Clear the PR flag - cleared when a 1 is written to it
 		EXTI->PR |= (1U << Pin13);
 
 		EXTI_Callback();
 
 	}
 
-}*/
+}
 
 
 

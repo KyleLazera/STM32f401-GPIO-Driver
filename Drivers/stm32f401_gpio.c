@@ -2,6 +2,26 @@
 #include "stm32f401_gpio.h"
 #include "stm32f4xx.h"
 
+
+/*This driver was designed to provide the user with easier access to the GPIO ports, and make the
+ * process of configuring the ports less arduous. This driver was written specifically for the stm32f401re,
+ * and was tested using the stm32f401re nucleo-board. This driver should be functional on any stm32f4xx MCU, however
+ * there may be a few differences in some of the functions.
+ *
+ * The functions within this driver give the user the ability to:
+ * 		1)Configure and initialize a specific port or pin based on the desired usage of the GPIO.
+ * 		2)Enable or disable (reset) clock access to a GPIO port.
+ * 		3)Write a value to the ODR for a pin or write a value to an entire port.
+ * 		4)Read values from a pin or an entire port.
+ * 		5)Configure the on-board pushbutton and LED (For the stm32f401re nucleo-board)
+ * 			using a single function.
+ * 		6)Configure an external hardware interrupt.
+ *
+ * Examples of how to use these functions are present in the Example_Functions folder.
+ *
+ * Designed By: Kyle Lazera
+ */
+
 /*
  * @brief	Configures the GPIO_Config data based on the desired values
  *
@@ -214,6 +234,8 @@ void GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_Config_t *GPIO_Config)
 
 /*
  * @brief	This function allows the user to set a specific GPIO pin in alternate function mode.
+ *
+ * @note	See the data-sheet for what each AF value is associated with for each port.
  *
  * @param	GPIOx: Defines the specific GPIO port, where x can range from A - E, or H.
  *
