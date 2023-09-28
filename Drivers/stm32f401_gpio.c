@@ -31,6 +31,10 @@
  * @param	GPIO_Config_t: Points to the data structure that contains all the configuration
  * 			values for the GPIO pin.
  *
+ * @param	Port: Points to the GPIO_TypeDef data structure present in the GPIO_Config_t
+ * 			data structure. Defines the specific GPIO port, where x can range from GPIOA - GPIOE,
+ * 			or GPIOH.
+ *
  * @param	Pin: Accepts a value from the user and assigns it to the pin number in the
  * 			GPIO_Config_t data structure.
  * 			This value should range from 0 - 15.
@@ -61,9 +65,10 @@
  * 			0x1		or		GPIO_PullUp
  * 			0x2		or		GPIO_PullDown
  */
-void GPIO_Config(GPIO_Config_t *GPIO_Config, uint8_t Pin, uint8_t Mode, uint8_t OType, uint8_t OSpeed, uint8_t PUPD)
+void GPIO_Config(GPIO_Config_t *GPIO_Config, GPIO_TypeDef *Port, uint8_t Pin, uint8_t Mode, uint8_t OType, uint8_t OSpeed, uint8_t PUPD)
 {
 	GPIO_Config->GPIO_Pin = Pin;
+	GPIO_Config->GPIO_Port = Port;
 	GPIO_Config->GPIO_MODE = Mode;
 	GPIO_Config->GPIO_OTYPE = OType;
 	GPIO_Config->GPIO_OSPEED = OSpeed;
@@ -173,43 +178,41 @@ void GPIO_PeriphClck(GPIO_TypeDef *GPIOx, FunctionalState state)
  * 			using the lock register to ensure these pins remain unchanged and are used for debugging.
  * 			To unlock these pins, reset the GPIOA peripheral using the GPIO_PeriphClck() function.
  *
- * @param	GPIOx: Defines the specific GPIO port, where x can range from A - E, or H.
- *
  * @param	GPIO_Config: pointer to the GPIO_Config_t data structure that contains the
  * 			configuration parameters for the specific GPIO pin.
  */
-void GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_Config_t *GPIO_Config)
+void GPIO_Init(GPIO_Config_t *GPIO_Config)
 {
 	uint8_t pin = GPIO_Config->GPIO_Pin;
 	uint32_t temp_variable;
 
-	GPIO_PeriphClck(GPIOx, ENABLE);
+	GPIO_PeriphClck(GPIO_Config->GPIO_Port, ENABLE);
 
 	if(GPIO_Config->GPIO_Pin == AllPins)
 	{
-		if(GPIOx == GPIOA)
+		if(GPIO_Config->GPIO_Port == GPIOA)
 		{
 			/*Use the lock configuration to lock PA13 and PA14*/
-			GPIOx->LCKR = LCKR_1_Pin13_Pin14;
-			GPIOx->LCKR = LCKR_0_Pin13_Pin14;
-			GPIOx->LCKR = LCKR_1_Pin13_Pin14;
-			temp_variable = GPIOx->LCKR;
+			GPIO_Config->GPIO_Port->LCKR = LCKR_1_Pin13_Pin14;
+			GPIO_Config->GPIO_Port->LCKR = LCKR_0_Pin13_Pin14;
+			GPIO_Config->GPIO_Port->LCKR = LCKR_1_Pin13_Pin14;
+			temp_variable = GPIO_Config->GPIO_Port->LCKR;
 		}
 
 		/*Used to set each pin is AllPins is set by user*/
 		for(pin = 0; pin < 16; pin++)
 		{
-			GPIOx->MODER &= ~(GPIO_Mode_Reset << (pin * 2));
-			GPIOx->MODER |= ((GPIO_Config->GPIO_MODE) << (pin * 2));
+			GPIO_Config->GPIO_Port->MODER &= ~(GPIO_Mode_Reset << (pin * 2));
+			GPIO_Config->GPIO_Port->MODER |= ((GPIO_Config->GPIO_MODE) << (pin * 2));
 
-			GPIOx->OTYPER &= ~(GPIO_OType_Reset << pin);
-			GPIOx->OTYPER |= ((GPIO_Config->GPIO_OTYPE) << pin);
+			GPIO_Config->GPIO_Port->OTYPER &= ~(GPIO_OType_Reset << pin);
+			GPIO_Config->GPIO_Port->OTYPER |= ((GPIO_Config->GPIO_OTYPE) << pin);
 
-			GPIOx->OSPEEDR &= ~(GPIO_OSpeed_Reset << (pin * 2));
-			GPIOx->OSPEEDR |= ((GPIO_Config->GPIO_OSPEED) << (pin * 2));
+			GPIO_Config->GPIO_Port->OSPEEDR &= ~(GPIO_OSpeed_Reset << (pin * 2));
+			GPIO_Config->GPIO_Port->OSPEEDR |= ((GPIO_Config->GPIO_OSPEED) << (pin * 2));
 
-			GPIOx->PUPDR &= ~(GPIO_PUPD_Reset << (pin * 2));
-			GPIOx->PUPDR |= ((GPIO_Config->GPIO_PUPD) << (pin * 2));
+			GPIO_Config->GPIO_Port->PUPDR &= ~(GPIO_PUPD_Reset << (pin * 2));
+			GPIO_Config->GPIO_Port->PUPDR |= ((GPIO_Config->GPIO_PUPD) << (pin * 2));
 
 		}
 
@@ -217,17 +220,17 @@ void GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_Config_t *GPIO_Config)
 
 	else
 	{
-		GPIOx->MODER &= ~(GPIO_Mode_Reset << (pin * 2));
-		GPIOx->MODER |= ((GPIO_Config->GPIO_MODE) << (pin * 2));
+		GPIO_Config->GPIO_Port->MODER &= ~(GPIO_Mode_Reset << (pin * 2));
+		GPIO_Config->GPIO_Port->MODER |= ((GPIO_Config->GPIO_MODE) << (pin * 2));
 
-		GPIOx->OTYPER &= ~(GPIO_OType_Reset << pin);
-		GPIOx->OTYPER |= ((GPIO_Config->GPIO_OTYPE) << pin);
+		GPIO_Config->GPIO_Port->OTYPER &= ~(GPIO_OType_Reset << pin);
+		GPIO_Config->GPIO_Port->OTYPER |= ((GPIO_Config->GPIO_OTYPE) << pin);
 
-		GPIOx->OSPEEDR &= ~(GPIO_OSpeed_Reset << (pin * 2));
-		GPIOx->OSPEEDR |= ((GPIO_Config->GPIO_OSPEED) << (pin * 2));
+		GPIO_Config->GPIO_Port->OSPEEDR &= ~(GPIO_OSpeed_Reset << (pin * 2));
+		GPIO_Config->GPIO_Port->OSPEEDR |= ((GPIO_Config->GPIO_OSPEED) << (pin * 2));
 
-		GPIOx->PUPDR &= ~(GPIO_PUPD_Reset << (pin * 2));
-		GPIOx->PUPDR |= ((GPIO_Config->GPIO_PUPD) << (pin * 2));
+		GPIO_Config->GPIO_Port->PUPDR &= ~(GPIO_PUPD_Reset << (pin * 2));
+		GPIO_Config->GPIO_Port->PUPDR |= ((GPIO_Config->GPIO_PUPD) << (pin * 2));
 	}
 
 }
@@ -237,8 +240,6 @@ void GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_Config_t *GPIO_Config)
  *
  * @note	See the data-sheet for what each AF value is associated with for each port.
  *
- * @param	GPIOx: Defines the specific GPIO port, where x can range from A - E, or H.
- *
  * @param	GPIO_Config: GPIO_Config: pointer to the GPIO_Config_t data structure that contains the
  * 			configuration parameters for the specific GPIO pin.
  *
@@ -246,7 +247,7 @@ void GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_Config_t *GPIO_Config)
  * 			The specific alternate function values and their functions are present in the data sheet.
  * 			The inputs for this function are AF0 - AF15;
  */
-void GPIO_AlternateFunctionConfig(GPIO_TypeDef *GPIOx, GPIO_Config_t *GPIO_Config, AFR_Config_t alt_function)
+void GPIO_AlternateFunctionConfig(GPIO_Config_t *GPIO_Config, AFR_Config_t alt_function)
 {
 	uint8_t pin = GPIO_Config->GPIO_Pin;
 	uint8_t alt_function_array = pin/8;
@@ -256,8 +257,8 @@ void GPIO_AlternateFunctionConfig(GPIO_TypeDef *GPIOx, GPIO_Config_t *GPIO_Confi
 		pin -= 8;
 	}
 
-	GPIOx->AFR[alt_function_array] &= ~(AF15 << (pin * 4));
-	GPIOx->AFR[alt_function_array] |= (alt_function << (pin * 4));
+	GPIO_Config->GPIO_Port->AFR[alt_function_array] &= ~(AF15 << (pin * 4));
+	GPIO_Config->GPIO_Port->AFR[alt_function_array] |= (alt_function << (pin * 4));
 }
 
 /*
@@ -266,9 +267,8 @@ void GPIO_AlternateFunctionConfig(GPIO_TypeDef *GPIOx, GPIO_Config_t *GPIO_Confi
  *
  *@note		Prior to using this function, the desired GPIO peripheral must be configured and initialized.
  *
- *@param	GPIOx: Defines the specific GPIO port, where x can range from A - E, or H.
- *
- *@param	Pin: Takes the pin the user wishes to access, where the pin can be 0 - 15.
+ *@param	GPIO_Config: pointer to the GPIO_Config_t data structure that contains the
+ * 			configuration parameters for the specific GPIO pin.
  *
  *@param	State: Determines whether the peripheral is turn on, reset, or toggled
  *			This parameter can be:
@@ -277,21 +277,23 @@ void GPIO_AlternateFunctionConfig(GPIO_TypeDef *GPIOx, GPIO_Config_t *GPIO_Confi
  *			GPIO_Toggle		or		0x3
  */
 
-void GPIO_WritePin(GPIO_TypeDef *GPIOx, uint8_t Pin, uint8_t State)
+void GPIO_WritePin(GPIO_Config_t *GPIO_Config, uint8_t State)
 {
+	uint8_t pin = GPIO_Config->GPIO_Pin;
+
 	if(State == GPIO_Write)
 	{
-		GPIOx->ODR |= (0x1UL << Pin);
+		GPIO_Config->GPIO_Port->ODR |= (0x1UL << pin);
 	}
 
 	else if(State == GPIO_Reset)
 	{
-		GPIOx->ODR &= ~(0x1UL << Pin);
+		GPIO_Config->GPIO_Port->ODR &= ~(0x1UL << pin);
 	}
 
 	else if(State == GPIO_Toggle)
 	{
-		GPIOx->ODR ^= (0x1UL << Pin);
+		GPIO_Config->GPIO_Port->ODR ^= (0x1UL << pin);
 	}
 
 }
@@ -308,29 +310,30 @@ void GPIO_WritePin(GPIO_TypeDef *GPIOx, uint8_t Pin, uint8_t State)
  *
  * @note	This function can be used to reset the ODR for a port by writing 0x0000.
  *
- * @param	GPIOx: Defines the specific GPIO port, where x can range from A - E, or H.
+ * @param	GPIO_Config: pointer to the GPIO_Config_t data structure that contains the
+ * 			configuration parameters for the specific GPIO pin.
  *
  * @param	word: 16-bit data that is to be written to the ODR.
  */
-void GPIO_WritePort(GPIO_TypeDef *GPIOx, uint16_t word)
+void GPIO_WritePort(GPIO_Config_t *GPIO_Config, uint16_t word)
 {
-	GPIOx->ODR = word;
+	GPIO_Config->GPIO_Port->ODR = word;
 }
 
 /*
  * @brief	Reads a specified pin on the input data register.
  *
- * @param	GPIOx: Defines the specific GPIO port, where x can range from A - E, or H.
- *
- * @param	Pin: Takes the pin the user wishes to access, where the pin can be 0 - 15.
+ * @param	GPIO_Config: pointer to the GPIO_Config_t data structure that contains the
+ * 			configuration parameters for the specific GPIO pin.
  *
  * @retval	Returns either a 1 or 0 from the IDR (Input Data register)
  */
-uint8_t GPIO_ReadPin(GPIO_TypeDef *GPIOx, uint8_t Pin)
+uint8_t GPIO_ReadPin(GPIO_Config_t *GPIO_Config)
 {
 	uint8_t value;
+	uint8_t pin = GPIO_Config->GPIO_Pin;
 
-	value = (uint8_t)(GPIO_IDR_Mask & ((GPIOx->IDR) >> Pin));
+	value = (uint8_t)(GPIO_IDR_Mask & ((GPIO_Config->GPIO_Port->IDR) >> pin));
 
 	return value;
 }
@@ -338,15 +341,16 @@ uint8_t GPIO_ReadPin(GPIO_TypeDef *GPIOx, uint8_t Pin)
 /*
  * @brief	Reads the input data register of a specified port and returns the 16 bit value
  *
- * @param	GPIOx: Defines the specific GPIO port, where x can range from A - E, or H.
+ * @param	GPIO_Config: pointer to the GPIO_Config_t data structure that contains the
+ * 			configuration parameters for the specific GPIO pin.
  *
  * @retval	Returns a 16 bit value from IDR
  */
-uint16_t GPIO_ReadPort(GPIO_TypeDef *GPIOx)
+uint16_t GPIO_ReadPort(GPIO_Config_t *GPIO_Config)
 {
 	uint16_t value;
 
-	value = (uint16_t)(GPIOx->IDR);
+	value = (uint16_t)(GPIO_Config->GPIO_Port->IDR);
 
 	return value;
 }
@@ -370,24 +374,10 @@ uint16_t GPIO_ReadPort(GPIO_TypeDef *GPIOx)
 void GPIO_ConfigLEDPA5(uint8_t State)
 {
 	GPIO_Config_t PortAPin5_LED;
-	GPIO_Config(&PortAPin5_LED, Pin5, GPIO_Output, GPIO_PushPull, GPIO_LowSpeed, GPIO_PUPD_None);
-	GPIO_Init(GPIOA, &PortAPin5_LED);
+	GPIO_Config(&PortAPin5_LED, GPIOA, Pin5, GPIO_Output, GPIO_PushPull, GPIO_LowSpeed, GPIO_PUPD_None);
+	GPIO_Init(&PortAPin5_LED);
 
-	if(State == GPIO_Write)
-	{
-		GPIOA->ODR |= (0x1UL << Pin5);
-	}
-
-	else if(State == GPIO_Reset)
-	{
-		GPIOA->ODR &= ~(0x1UL << Pin5);
-	}
-
-	else if(State == GPIO_Toggle)
-	{
-		GPIOA->ODR ^= (0x1UL << Pin5);
-	}
-
+	GPIO_WritePin(&PortAPin5_LED, State);
 }
 
 /*
@@ -406,9 +396,9 @@ void GPIO_ConfigLEDPA5(uint8_t State)
 uint8_t GPIO_ConfigButtonPC13(void)
 {
 	GPIO_Config_t PortCPin13_PushButton;
-	GPIO_Config(&PortCPin13_PushButton, 13, GPIO_Input, 0x0, 0x0, GPIO_PullDown);
-	GPIO_Init(GPIOC, &PortCPin13_PushButton);
-	return GPIO_ReadPin(GPIOC, Pin13);
+	GPIO_Config(&PortCPin13_PushButton, GPIOC, Pin13, GPIO_Input, 0x0, 0x0, GPIO_PullDown);
+	GPIO_Init(&PortCPin13_PushButton);
+	return GPIO_ReadPin(&PortCPin13_PushButton);
 }
 
 /*

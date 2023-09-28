@@ -24,22 +24,22 @@ int main()
 {
 	//Initializing all pins in port C as input
 	GPIO_Config_t PortC;
-	GPIO_Config(&PortC, AllPins, GPIO_Input, GPIO_PushPull, GPIO_LowSpeed, GPIO_PullDown);
-	GPIO_Init(GPIOC, &PortC);
+	GPIO_Config(&PortC, GPIOC, AllPins, GPIO_Input, GPIO_PushPull, GPIO_LowSpeed, GPIO_PullDown);
+	GPIO_Init(&PortC);
 
 	//Initializing all pins in port A as output
 	GPIO_Config_t PortA;
-	GPIO_Config(&PortA, AllPins, GPIO_Output, GPIO_PushPull, GPIO_LowSpeed, GPIO_PUPD_None);
-	GPIO_Init(GPIOA, &PortA);
+	GPIO_Config(&PortA, GPIOA, AllPins, GPIO_Output, GPIO_PushPull, GPIO_LowSpeed, GPIO_PUPD_None);
+	GPIO_Init(&PortA);
 
 
 	while (1)
 	{
 		//Reading from port C
-		portc = GPIO_ReadPort(GPIOC);
+		portc = GPIO_ReadPort(&PortC);
 
 		//Writing a value to Port A
-		GPIO_WritePort(GPIOA, 0xffff);
+		GPIO_WritePort(&PortA, 0xffff);
 
 	}
 }

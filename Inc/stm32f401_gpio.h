@@ -34,6 +34,7 @@ typedef struct
 	uint8_t GPIO_OTYPE;
 	uint8_t GPIO_OSPEED;
 	uint8_t GPIO_PUPD;
+	GPIO_TypeDef *GPIO_Port;
 }GPIO_Config_t;
 
 /********** GPIO Configuration Macros **********/
@@ -71,7 +72,7 @@ typedef struct
 #define Pin2							0x2
 #define Pin3							0x3
 #define Pin4							0x4
-#define Pin5							0x5
+#define Pin5							0x5UL
 #define Pin6							0x6
 #define Pin7							0x7
 #define Pin8							0x8
@@ -113,14 +114,14 @@ typedef struct
 #define EXTI_Rising_FallingTrigger			0x2
 
 /********** Functions **********/
-void GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_Config_t *GPIO_Config);
-void GPIO_Config(GPIO_Config_t *GPIO_Config, uint8_t Pin, uint8_t Mode, uint8_t OType, uint8_t OSpeed, uint8_t PUPD);
-void GPIO_AlternateFunctionConfig(GPIO_TypeDef *GPIOx, GPIO_Config_t *GPIO_Config, AFR_Config_t alt_function);
+void GPIO_Config(GPIO_Config_t *GPIO_Config, GPIO_TypeDef *Port, uint8_t Pin, uint8_t Mode, uint8_t OType, uint8_t OSpeed, uint8_t PUPD);
+void GPIO_Init(GPIO_Config_t *GPIO_Config);
+void GPIO_AlternateFunctionConfig(GPIO_Config_t *GPIO_Config, AFR_Config_t alt_function);
 void GPIO_PeriphClck(GPIO_TypeDef *GPIOx, FunctionalState state);
-void GPIO_WritePin(GPIO_TypeDef *GPIOx, uint8_t Pin, uint8_t State);
-void GPIO_WritePort(GPIO_TypeDef *GPIOx, uint16_t word);
-uint8_t GPIO_ReadPin(GPIO_TypeDef *GPIOx, uint8_t Pin);
-uint16_t GPIO_ReadPort(GPIO_TypeDef *GPIOx);
+void GPIO_WritePin(GPIO_Config_t *GPIO_Config, uint8_t State);
+void GPIO_WritePort(GPIO_Config_t *GPIO_Config, uint16_t word);
+uint8_t GPIO_ReadPin(GPIO_Config_t *GPIO_Config);
+uint16_t GPIO_ReadPort(GPIO_Config_t *GPIO_Config);
 void GPIO_ConfigLEDPA5(uint8_t State);
 uint8_t GPIO_ConfigButtonPC13(void);
 void GPIO_EXTIConfig(uint8_t port, uint8_t pin, uint8_t edge_trigger);

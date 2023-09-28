@@ -18,24 +18,25 @@
  *
  * This program starts off with the on-board LED permanently turned off. Rather than polling the pushbutton state as shown in the GPIO_Pin_Config
  * example, this example uses an external interrupt. When the pushbutton is pressed, the program temporarily stops running the code in the while loop
- * and will run the interrupt service routine, which in this case, turns the on-board LED on temporarily. Once the button is then unpressed, the
+ * and will run the interrupt service routine, which in this case, turns the on-board LED on temporarily. Once the button is then un-pressed, the
  * LED will return to its original state.
  */
 
 static void EXTI_Callback();
 void EXTI15_10_IRQHandler();
 
+GPIO_Config_t PortAPin5;
+GPIO_Config_t PortCPin13;
+
 int main()
 {
 	//Port A, Pin 5 (on-Board LED) - GPIO Output, push-pull, Low Speed and no pull-up/pull-down.
-	GPIO_Config_t PA5;
-	GPIO_Config(&PA5, Pin5, GPIO_Output, GPIO_PushPull, GPIO_LowSpeed, GPIO_PUPD_None);
-	GPIO_Init(GPIOA, &PA5);
+	GPIO_Config(&PortAPin5, GPIOA, Pin5, GPIO_Output, GPIO_PushPull, GPIO_LowSpeed, GPIO_PUPD_None);
+	GPIO_Init(&PortAPin5);
 
 	//Port C, Pin 13 (on-board pushbutton) - GPIO Input, push-pull, Medium Speed and Pull-Up activated
-	GPIO_Config_t PC13;
-	GPIO_Config(&PC13, Pin13, GPIO_Input, GPIO_PushPull, GPIO_LowSpeed, GPIO_PUPD_None);
-	GPIO_Init(GPIOC, &PC13);
+	GPIO_Config(&PortCPin13, GPIOC, Pin13, GPIO_Input, GPIO_PushPull, GPIO_LowSpeed, GPIO_PUPD_None);
+	GPIO_Init(&PortCPin13);
 
 	//Configure the EXTI
 	GPIO_EXTIConfig(EXTI_PortC, Pin13, EXTI_RisingTrigger);
@@ -43,7 +44,7 @@ int main()
 	while(1)
 	{
 		//Set the default state of the LED to off
-		GPIO_WritePin(GPIOA, Pin5, GPIO_Reset);
+		GPIO_WritePin(&PortAPin5, GPIO_Reset);
 	}
 
 }
@@ -51,7 +52,7 @@ int main()
 static void EXTI_Callback()
 {
 	//Turn on the LED/
-	GPIO_WritePin(GPIOA, Pin5, GPIO_Write);
+	GPIO_WritePin(&PortAPin5, GPIO_Write);
 	//The for loop is used to add a slight delay so the LED is visible when it is turned on
 	for(int i = 0; i < 1000000; i++){}
 }

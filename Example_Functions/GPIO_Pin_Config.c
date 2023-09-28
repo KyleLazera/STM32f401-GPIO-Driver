@@ -22,44 +22,44 @@ uint8_t gpio_read;
 int main()
 {
 	//Port A, Pin 5 (on-Board LED) - GPIO Output, push-pull, Low Speed and no pull-up/pull-down.*
-	GPIO_Config_t PA5;
-	GPIO_Config(&PA5, Pin5, GPIO_Output, GPIO_PushPull, GPIO_LowSpeed, GPIO_PUPD_None);
-	GPIO_Init(GPIOA, &PA5);
+	GPIO_Config_t PortAPin5;
+	GPIO_Config(&PortAPin5, GPIOA, Pin5, GPIO_Output, GPIO_PushPull, GPIO_LowSpeed, GPIO_PUPD_None);
+	GPIO_Init(&PortAPin5);
 
 	// Port C, Pin 13 (on-board pushbutton) - GPIO Input, push-pull, Medium Speed and Pull-Up activated
-	GPIO_Config_t PC13;
-	GPIO_Config(&PC13, Pin13, GPIO_Input, GPIO_PushPull, GPIO_MediumSpeed, GPIO_PUPD_None);
-	GPIO_Init(GPIOC, &PC13);
+	GPIO_Config_t PortCPin13;
+	GPIO_Config(&PortCPin13, GPIOC, Pin13, GPIO_Input, GPIO_PushPull, GPIO_MediumSpeed, GPIO_PUPD_None);
+	GPIO_Init(&PortCPin13);
 
 	// Port B, Pin 6 - Alternate Function, push-pull, Low Speed, no pull-up/pull-down, AF02
-	GPIO_Config_t PB6;
-	GPIO_Config(&PB6, Pin6, GPIO_AF, GPIO_PushPull, GPIO_LowSpeed, GPIO_PUPD_None);
-	GPIO_Init(GPIOB, &PB6);
-	GPIO_AlternateFunctionConfig(GPIOB, &PB6, AF2);
+	GPIO_Config_t PortBPin6;
+	GPIO_Config(&PortBPin6, GPIOB, Pin6, GPIO_AF, GPIO_PushPull, GPIO_LowSpeed, GPIO_PUPD_None);
+	GPIO_Init(&PortBPin6);
+	GPIO_AlternateFunctionConfig(&PortBPin6, AF2);
 
 	//Port D, All pins, analog mode, push-pull, High Speed, No pull-up/pull-down
 	GPIO_Config_t PortDAllPins;
-	GPIO_Config(&PortDAllPins, AllPins, GPIO_Analog, GPIO_PushPull, GPIO_HighSpeed, GPIO_PUPD_None);
-	GPIO_Init(GPIOD, &PortDAllPins);
+	GPIO_Config(&PortDAllPins, GPIOD, AllPins, GPIO_Analog, GPIO_PushPull, GPIO_HighSpeed, GPIO_PUPD_None);
+	GPIO_Init(&PortDAllPins);
 
 	while(1)
 	{
-		gpio_read = GPIO_ReadPin(GPIOC, Pin13);
+		gpio_read = GPIO_ReadPin(&PortCPin13);
 		if(gpio_read == 1)
 		{
-			GPIO_WritePin(GPIOA, Pin5, GPIO_Write);
+			GPIO_WritePin(&PortAPin5, GPIO_Write);
 		}
 
 		else
 		{
-			GPIO_WritePin(GPIOA, Pin5, GPIO_Toggle);
+			GPIO_WritePin(&PortAPin5, GPIO_Toggle);
 			//Used to add a temporary delay so the toggling is visible
 			for(int i = 0; i < 100000; i++);
 		}
 	}
-
-
-
 }
+
+
+
 
 
