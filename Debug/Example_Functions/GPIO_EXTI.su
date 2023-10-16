@@ -1,3 +1,0 @@
-../Example_Functions/GPIO_EXTI.c:31:5:main	24	static
-../Example_Functions/GPIO_EXTI.c:52:13:EXTI_Callback	16	static
-../Example_Functions/GPIO_EXTI.c:60:6:EXTI15_10_IRQHandler	8	static
